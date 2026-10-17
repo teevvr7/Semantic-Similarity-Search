@@ -37,7 +37,7 @@ from app.models.schemas import (
 )
 from app.services.preprocessor import preprocess_query
 
-logger = logging.getLogger("nexora.search_service")
+logger = logging.getLogger("semantic_search.search_service")
 logging.basicConfig(level=logging.INFO)
 
 
@@ -79,7 +79,7 @@ class SearchEngine:
             return
 
         t_start = time.time()
-        logger.info("=== Initializing Nexora AI Search Engine ===")
+        logger.info("=== Initializing Semantic Search Engine ===")
 
         # 1. Load Word2Vec model
         logger.info(f"Loading Word2Vec model from {WORD2VEC_MODEL_PATH.name}...")

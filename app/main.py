@@ -15,7 +15,7 @@ from app.api.endpoints import router as api_router
 from app.config import APP_TITLE, APP_DESCRIPTION, APP_VERSION
 from app.services.search_service import SearchEngine
 
-logger = logging.getLogger("nexora.main")
+logger = logging.getLogger("semantic_search.main")
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",

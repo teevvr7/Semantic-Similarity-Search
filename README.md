@@ -1,13 +1,13 @@
-# Nexora AI — Semantic Similarity Search System
+# Semantic Similarity Search System
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.121+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Gensim](https://img.shields.io/badge/Gensim-4.4.0-E95420.svg?logo=python&logoColor=white)](https://radimrehurek.com/gensim/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.9.0-F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
-[![License](https://img.shields.io/badge/Assessment-Confidential-blue.svg)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A production-grade, modular Semantic Similarity Search System built for the **Nexora AI Language Systems Group** technical assessment (Assessment Ref: `NX-NLP-2026-017`).
+A production-grade, modular Semantic Similarity Search System designed for dense semantic retrieval across large-scale knowledge bases and document collections.
 
-The system ingests user natural language queries and retrieves the most semantically relevant documents across a knowledge base of **50,000 documents**. It features a **Word2Vec (100D)** primary dense retrieval model, an automatic **FastText character n-gram (3–6 chars)** fallback engine for unseen/out-of-vocabulary (OOV) words, and a **TF-IDF baseline** for comparative evaluation.
+The system ingests user natural language queries and retrieves the most semantically relevant documents across a knowledge base of **50,000 documents**. It features a **Word2Vec (100D)** primary dense retrieval model, an automatic **FastText character n-gram (3–6 chars)** fallback engine for unseen/out-of-vocabulary (OOV) words and typographical errors, and a **TF-IDF baseline** for comparative evaluation.
 
 ---
 
@@ -16,7 +16,7 @@ The system ingests user natural language queries and retrieves the most semantic
 ```
 +---------------------------------------------------------------------------------+
 |                                USER INTERFACE                                   |
-|   (Enterprise Web Console: Search Input, Token Attribution, Side-by-Side View)  |
+|   (Interactive Console: Search Input, Token Attribution, Side-by-Side View)     |
 +---------------------------------------------------------------------------------+
                                       |
                                       | REST API (POST /api/search, POST /api/compare)
@@ -27,7 +27,7 @@ The system ingests user natural language queries and retrieves the most semantic
                                       |
                                       v
 +---------------------------------------------------------------------------------+
-|                       1. TEXT PREPROCESSING (Req 4.1)                           |
+|                             1. TEXT PREPROCESSING                               |
 |      Lowercasing -> Regex Punctuation Strip -> NLTK Tokenize -> Lemmatization    |
 +---------------------------------------------------------------------------------+
                                       |
@@ -40,7 +40,7 @@ The system ingests user natural language queries and retrieves the most semantic
 |       In Word2Vec?  YES      NO (OOV / Typo)                                    |
 |                     |        |                                                  |
 |                     v        v                                                  |
-|             [Word2Vec 100D]  [FastText Sub-word n-grams 3-6D] (Req 4.3 Fallback)|
+|             [Word2Vec 100D]  [FastText Sub-word n-grams 3-6D] (Fallback)        |
 |                     \        /                                                  |
 |                      v      v                                                   |
 |             Combined Hybrid Mean Query Vector: q in R^100                       |
@@ -48,14 +48,14 @@ The system ingests user natural language queries and retrieves the most semantic
                                       |
                                       v
 +---------------------------------------------------------------------------------+
-|                 3. L2-NORMALIZED COSINE SIMILARITY (Req 4.4)                    |
+|                       3. L2-NORMALIZED COSINE SIMILARITY                        |
 |       Vectorized Matrix Dot Product: S = D_norm x q_norm^T                      |
 |       Corpus: 50,000 Documents x 100 Dimensions -> Sub-10ms Latency            |
 +---------------------------------------------------------------------------------+
                                       |
                                       v
 +---------------------------------------------------------------------------------+
-|                   4. CATEGORY FILTERING & RANKING (Req 4.7)                     |
+|                         4. CATEGORY FILTERING & RANKING                         |
 |           Filter by Category (if chosen) -> Top-K Partial Sort -> Response       |
 +---------------------------------------------------------------------------------+
 ```
@@ -64,25 +64,25 @@ The system ingests user natural language queries and retrieves the most semantic
 
 ## 2. Key Features
 
-- **Primary Word2Vec Model (Req 4.2)**: 100-dimensional dense semantic vectors capturing conceptual relationships between words beyond exact string matching.
-- **FastText OOV Fallback Engine (Req 4.3)**: When user queries contain unseen words, slang, or typographical errors (e.g., `"accunt"` or `"worng"`), the system seamlessly falls back to FastText character n-grams ($n \in [3, 6]$) to construct sub-word representations rather than dropping tokens or returning zero vectors.
+- **Primary Word2Vec Model**: 100-dimensional dense semantic vectors capturing conceptual relationships between words beyond exact string matching.
+- **FastText OOV Fallback Engine**: When user queries contain unseen words, slang, or typographical errors (e.g., `"accunt"` or `"worng"`), the system seamlessly falls back to FastText character n-grams ($n \in [3, 6]$) to construct sub-word representations rather than dropping tokens or returning zero vectors.
 - **Real-Time Token Explainability Ribbon**: Visualizes exactly how each query token was handled:
   - <span style="color:#059669; font-weight:bold;">Primary (Word2Vec)</span>: Term recognized in training vocabulary.
-  - <span style="color:#d97706; font-weight:bold;">Fallback (FastText)</span>: Unseen / OOV term resolved via sub-words.
-- **Side-by-Side Model Comparison Benchmark (Req 4.5)**: Evaluates any query across four strategies simultaneously:
+  - <span style="color:#d97706; font-weight:bold;">Fallback (FastText)</span>: Unseen / OOV term resolved via character sub-words.
+- **Side-by-Side Model Comparison Benchmark**: Evaluates any query across four strategies simultaneously:
   1. *Hybrid Pipeline (Word2Vec + FastText Fallback)*
   2. *Pure Word2Vec (fails on OOV terms)*
   3. *Pure FastText (all sub-word representation)*
   4. *TF-IDF Baseline (lexical keyword frequency)*
 - **High-Throughput BLAS Cosine Search**: The 50,000 document embeddings are pre-stacked and $L_2$-normalized in memory upon server startup. Query similarity calculation reduces to an instantaneous BLAS matrix dot product with query execution latencies under **10 ms**.
-- **Faceted Category Filtering & Top-K Controls (Req 4.7)**: Supports dynamic filtering across 15 document categories (*Authentication, Account Management, Payments, Shipping, Security, Mobile App, etc.*) with configurable result counts.
-- **Enterprise Web UI**: Designed with clean typography, dark/light theme persistence, interactive slide-over document drawer, and pre-canned evaluation test cases.
+- **Faceted Category Filtering & Top-K Controls**: Supports dynamic filtering across 15 document categories (*Authentication, Account Management, Payments, Shipping, Security, Mobile App, etc.*) with configurable result counts.
+- **Modern Web UI**: Designed with clean typography, dark/light theme persistence, interactive slide-over document drawer, and pre-canned evaluation test cases.
 
 ---
 
 ## 3. Directory & Codebase Structure
 
-The project strictly follows modular software engineering standards:
+The project follows a clean, modular software engineering structure:
 
 ```
 Semantic-Similarity-Search/
@@ -101,9 +101,9 @@ Semantic-Similarity-Search/
 │   │   ├── __init__.py             # API package exports
 │   │   └── endpoints.py            # REST endpoints (/api/search, /api/compare, etc.)
 │   └── static/
-│       ├── index.html              # Modern, accessible enterprise search client
+│       ├── index.html              # Modern, accessible search client
 │       ├── css/
-│       │   └── style.css           # High-contrast, tailored enterprise styling
+│       │   └── style.css           # High-contrast, tailored styling
 │       └── js/
 │           └── app.js              # State management, debouncing & UI orchestration
 ├── data/
@@ -120,22 +120,21 @@ Semantic-Similarity-Search/
 ├── notebooks/
 │   ├── data-understanding.ipynb    # Exploratory data understanding notebook
 │   └── Semantic_Similarity_Search(Project5).ipynb # Core model training & validation notebook
-├── docs/
-│   └── NLP_P5_Technical_Assessment_Semantic_Search.pdf # Assessment design brief
 ├── tests/
 │   └── test_pipeline.py            # End-to-end integration test suite
 ├── run.py                          # Root launcher script with ASCII banner & auto-browser
 ├── requirements.txt                # Production dependencies
+├── LICENSE                         # MIT License
 ├── .gitignore                      # Git ignore rules
 └── README.md                       # Comprehensive documentation
 ```
 
 ---
 
-## 4. NLP Methodology & Functional Requirements
+## 4. NLP Methodology & Pipeline Architecture
 
 ### 4.1 Text Preprocessing (`app/services/preprocessor.py`)
-Conforming to **Requirement 4.1**, queries and documents undergo an identical deterministic pipeline:
+Queries and documents undergo an identical deterministic cleaning pipeline:
 1. **Case Normalization**: Conversion of all characters to lowercase.
 2. **Noise Removal**: Regex filtering `[^a-z\s]` stripping punctuation, digits, and control characters.
 3. **Tokenization**: NLTK `word_tokenize` splits strings into individual lexical tokens.
@@ -272,14 +271,14 @@ FastText top: Fix Compromised Account Access Problems in Minutes (Score: 0.7483)
 
 ---
 
-## 8. Nexora AI Assessment Summary Table
+## 8. Technical Architecture Summary
 
-| Requirement Ref | Requirement Description | Implementation in Web App |
+| Component | Capability | Implementation in Web App |
 |---|---|---|
-| **4.1** | Text Preprocessing | `app/services/preprocessor.py` (lowercasing, regex cleaning, tokenization, lemmatization) |
-| **4.2** | Text Representation | 100D dense vectors via Word2Vec Skip-Gram / CBOW |
-| **4.3** | Unseen Words (OOV) | FastText sub-word n-gram fallback + real-time UI token attribution |
-| **4.4** | Cosine Similarity & Ranking | Precomputed $L_2$-normalized BLAS matrix dot product + Top-K ranking |
-| **4.5** | Baseline Comparison | Side-by-side benchmark comparing Hybrid, Word2Vec, FastText, and TF-IDF |
-| **4.6** | Generalization | Dynamic preprocessing and encoding handles arbitrary unseen input |
-| **4.7** | Result Count & Filters | User-configurable Top-K (3 to 25) and 15-category filtering |
+| **Text Preprocessing** | Standardized cleaning pipeline | `app/services/preprocessor.py` (lowercasing, regex cleaning, tokenization, lemmatization) |
+| **Text Representation** | 100D dense vectors | Word2Vec Skip-Gram / CBOW (`w2v_doc_vector`) |
+| **Unseen Words (OOV)** | Character sub-words (3–6 chars) | FastText fallback model + real-time UI token attribution |
+| **Cosine Similarity & Ranking** | L2-normalized BLAS dot product | Sub-10ms similarity calculation across 50,000 documents |
+| **Baseline Comparison** | Lexical keyword frequency | Side-by-side benchmark comparing Hybrid, Word2Vec, FastText, and TF-IDF |
+| **Generalization** | Dynamic query encoding | Robust handling of arbitrary out-of-vocabulary domain inputs |
+| **Faceted Search & Filters** | Top-K & Category filtering | User-configurable Top-K (3 to 25) and 15-category filtering |

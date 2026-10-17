@@ -1,5 +1,5 @@
 /**
- * Nexora AI - Semantic Similarity Search Client Application
+ * Semantic Similarity Search Client Application
  * Handles state management, REST API orchestration, token attribution, and interactive UI components.
  */
 
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
    Theme Management
    ========================================================================== */
 function initTheme() {
-  const savedTheme = localStorage.getItem("nexora-theme") || "light";
+  const savedTheme = localStorage.getItem("search-theme") || "light";
   document.documentElement.setAttribute("data-theme", savedTheme);
   updateThemeIcons(savedTheme);
 }
@@ -69,7 +69,7 @@ function toggleTheme() {
   const current = document.documentElement.getAttribute("data-theme") || "light";
   const target = current === "light" ? "dark" : "light";
   document.documentElement.setAttribute("data-theme", target);
-  localStorage.setItem("nexora-theme", target);
+  localStorage.setItem("search-theme", target);
   updateThemeIcons(target);
 }
 

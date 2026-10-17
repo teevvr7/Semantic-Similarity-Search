@@ -1,5 +1,5 @@
 """
-Convenient Root Application Launcher for Nexora AI Semantic Similarity Search.
+Convenient Root Application Launcher for Semantic Similarity Search.
 Usage:
     python run.py
 """
@@ -11,18 +11,17 @@ import uvicorn
 
 BANNER = """
 ========================================================================
-   _  __                     ___    ____
-  / |/ /__ __ _____  _______/   |  /  _/
- /    / -_) \ / _  \/ __/ _  /| | _/ /  
-/_/|_/\__/_\_\___/\_/_/  /_/ |_|/___/   
-  Language Systems Group • Dense Semantic Retrieval Console
+   ____                             __  _      
+  / __/__ __ _  ___ ____  ___  ____/ /_(_)____ 
+ _\ \/ -_)  ' \/ _ `/ _ \/ _ \/ __/ __/ / __/ 
+/___/\__/_/_/_/\_,_/_//_/\__/_/\__/\__/_/\__/  
+  Dense Semantic Retrieval Console (Word2Vec + FastText Fallback)
 ========================================================================
-[*] Role: NLP Engineer Product Assessment (Ref: NX-NLP-2026-017)
-[*] Primary Model: Word2Vec (100D CBOW/Skip-Gram Dense Embeddings)
+[*] Primary Model:  Word2Vec (100D CBOW/Skip-Gram Dense Embeddings)
 [*] Fallback Model: FastText (Character n-grams 3-6 for unseen/OOV words)
 [*] Baseline Model: TF-IDF Sparse Vector Space
-[*] Document Corpus: 50,000 Indexed Knowledge Base Articles
-[*] Server URL:     http://localhost:8000
+[*] Corpus Size:    50,000 Indexed Knowledge Base Articles
+[*] Web Console:    http://localhost:8000
 [*] Swagger Docs:   http://localhost:8000/docs
 ========================================================================
 """

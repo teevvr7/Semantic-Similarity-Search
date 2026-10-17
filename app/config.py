@@ -40,7 +40,7 @@ TFIDF_MATRIX_PATH = (
 )
 
 # Service Settings
-APP_TITLE = "Nexora AI | Semantic Similarity Search Engine"
+APP_TITLE = "Semantic Similarity Search Engine"
 APP_DESCRIPTION = (
     "Production-grade semantic similarity search system featuring a Primary Word2Vec "
     "dense retrieval model with FastText character n-gram OOV fallback and TF-IDF baseline."
