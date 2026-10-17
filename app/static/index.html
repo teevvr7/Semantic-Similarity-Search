@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexora AI | Semantic Similarity Search Console</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="nav-brand">
+        <div class="brand-logo">N</div>
+        <div class="brand-text">
+          <h1>Nexora AI <span class="brand-badge">Enterprise Search</span></h1>
+          <p>Language Systems Group • Dense Semantic Retrieval</p>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <div class="status-pill" id="system-status-pill">
+          <span class="status-dot"></span>
+          <span id="system-status-text">Connecting...</span>
+        </div>
+        <a href="/docs" target="_blank" class="icon-btn" title="FastAPI Interactive Swagger Docs" style="text-decoration:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </a>
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+          <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+
+    <!-- Search Console Card -->
+    <section class="search-console">
+      <form id="search-form" onsubmit="event.preventDefault(); triggerSearch();">
+        <div class="search-input-group">
+          <div class="search-icon-left">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="query-input"
+            class="main-search-input"
+            placeholder="Search 50,000 knowledge base articles by semantic meaning... (e.g. 'MY app not worng')"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <div class="search-controls-right">
+            <button type="button" id="clear-query-btn" class="clear-query-btn" title="Clear query">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <button type="submit" class="search-submit-btn">
+              <span>Search</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Retrieval Strategy Tabs -->
+      <div class="mode-tabs-container">
+        <div class="mode-pills" id="mode-selector">
+          <button type="button" class="mode-tab-btn active" data-mode="hybrid">
+            <span>⚡ Hybrid Pipeline</span>
+            <span class="mode-tab-badge badge-recommended">Recommended</span>
+          </button>
+          <button type="button" class="mode-tab-btn" data-mode="compare">
+            <span>⚖️ Side-by-Side Benchmark</span>
+          </button>
+          <button type="button" class="mode-tab-btn" data-mode="word2vec">
+            <span>Word2Vec Primary</span>
+          </button>
+          <button type="button" class="mode-tab-btn" data-mode="fasttext">
+            <span>FastText Fallback</span>
+          </button>
+          <button type="button" class="mode-tab-btn" data-mode="tfidf">
+            <span>TF-IDF Baseline</span>
+            <span class="mode-tab-badge badge-baseline">Baseline</span>
+          </button>
+        </div>
+
+        <!-- Filter & Parameter Controls -->
+        <div class="filters-toolbar">
+          <div class="filter-group">
+            <label for="category-select">Category:</label>
+            <select id="category-select" class="filter-select">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="topk-select">Results:</label>
+            <select id="topk-select" class="filter-select" style="min-width:70px;">
+              <option value="3">Top 3</option>
+              <option value="5" selected>Top 5</option>
+              <option value="10">Top 10</option>
+              <option value="15">Top 15</option>
+              <option value="25">Top 25</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Test Query Presets -->
+      <div class="presets-section">
+        <span class="presets-label">Evaluation Presets:</span>
+        <button type="button" class="preset-chip highlight-fallback" onclick="setQueryPreset('MY app not worng')">
+          ⚠️ "MY app not worng" (Typo/OOV Demo)
+        </button>
+        <button type="button" class="preset-chip highlight-fallback" onclick="setQueryPreset('My accunt hacked my someone how fix this')">
+          ⚠️ "My accunt hacked my someone"
+        </button>
+        <button type="button" class="preset-chip" onclick="setQueryPreset('Cannot reset lost login password')">
+          "Cannot reset lost password"
+        </button>
+        <button type="button" class="preset-chip" onclick="setQueryPreset('Delayed parcel shipping refund')">
+          "Delayed parcel shipping refund"
+        </button>
+        <button type="button" class="preset-chip" onclick="setQueryPreset('Two-factor SMS verification code failure')">
+          "SMS 2FA code failure"
+        </button>
+        <button type="button" class="preset-chip" onclick="setQueryPreset('Biometric face recognition setup')">
+          "Biometric setup"
+        </button>
+      </div>
+    </section>
+
+    <!-- Query Explainability & Token Inspection Ribbon (Requirements 4.1 & 4.3) -->
+    <section class="inspection-ribbon" id="inspection-ribbon">
+      <div class="ribbon-header">
+        <div class="ribbon-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+          <span>Query Analysis & Embedding Attribution</span>
+        </div>
+        <div class="ribbon-metrics">
+          <div class="metric-item">
+            <span>Latency:</span>
+            <span class="metric-val" id="metric-latency">0.0 ms</span>
+          </div>
+          <div class="metric-item">
+            <span>Corpus:</span>
+            <span class="metric-val" id="metric-corpus">50,000</span>
+          </div>
+          <div class="metric-item">
+            <span>Dimensions:</span>
+            <span class="metric-val">100D</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preprocessing & Token Breakdown -->
+      <div class="token-pipeline-row" id="token-pipeline-row">
+        <span class="pipeline-step-label">Tokens:</span>
+        <div id="tokens-container" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+      </div>
+
+      <!-- Fallback Callout Alert (If OOV words detected) -->
+      <div class="fallback-alert-callout" id="fallback-alert" style="display:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div>
+          <strong>Out-of-Vocabulary (OOV) Fallback Engaged:</strong>
+          <span id="fallback-message">Word2Vec vocabulary did not contain unseen word(s). FastText character n-grams generated sub-word embeddings to preserve query intent.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Display Section -->
+    <section id="results-section">
+      <div class="results-header-bar">
+        <h2 class="results-heading">
+          Search Results
+          <span class="results-count-sub" id="results-count-sub"></span>
+        </h2>
+      </div>
+
+      <!-- Single Model Results Container -->
+      <div class="results-grid" id="single-results-container">
+        <!-- Default Empty State -->
+        <div class="empty-state-box" id="empty-state">
+          <div class="empty-state-icon">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <h3 class="empty-state-title">Ready to Search</h3>
+          <p class="empty-state-desc">Enter any natural language query or select an evaluation preset above to search through 50,000 indexed knowledge base articles.</p>
+        </div>
+      </div>
+
+      <!-- Comparative Side-by-Side Benchmark Container (Requirement 4.5) -->
+      <div class="comparative-view-container" id="comparative-container" style="display:none;">
+        <!-- Column 1: Hybrid -->
+        <div class="comp-column">
+          <div class="comp-col-header">
+            <h3>⚡ Hybrid Pipeline</h3>
+            <p class="comp-col-desc">Word2Vec Primary + FastText OOV Fallback</p>
+          </div>
+          <div class="comp-cards-list" id="comp-hybrid-list"></div>
+        </div>
+
+        <!-- Column 2: Word2Vec -->
+        <div class="comp-column">
+          <div class="comp-col-header">
+            <h3>Word2Vec Primary</h3>
+            <p class="comp-col-desc">Dense Embeddings (CBOW / Skip-Gram)</p>
+          </div>
+          <div class="comp-cards-list" id="comp-w2v-list"></div>
+        </div>
+
+        <!-- Column 3: FastText -->
+        <div class="comp-column">
+          <div class="comp-col-header">
+            <h3>FastText Fallback</h3>
+            <p class="comp-col-desc">Character n-grams (3-6 chars)</p>
+          </div>
+          <div class="comp-cards-list" id="comp-ft-list"></div>
+        </div>
+
+        <!-- Column 4: TF-IDF -->
+        <div class="comp-column">
+          <div class="comp-col-header">
+            <h3>TF-IDF Baseline</h3>
+            <p class="comp-col-desc">Keyword Frequency (Lexical Match)</p>
+          </div>
+          <div class="comp-cards-list" id="comp-tfidf-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Document Detail Slide-Over Drawer -->
+  <div class="drawer-backdrop" id="drawer-backdrop" onclick="closeDocumentDrawer(event)">
+    <div class="drawer-panel" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <span class="category-tag" id="drawer-category">Category</span>
+          <span class="doc-id-pill" id="drawer-doc-id" style="margin-left:8px;">ID</span>
+        </div>
+        <button class="drawer-close-btn" onclick="closeDrawer()" title="Close Drawer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        <h2 class="drawer-title" id="drawer-title" style="margin-bottom:1rem; font-size:1.25rem;">Document Title</h2>
+
+        <div class="drawer-section">
+          <div class="drawer-label">Full Content</div>
+          <div class="drawer-text" id="drawer-content">Loading...</div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-label">Indexed Keywords</div>
+          <div class="keywords-chips" id="drawer-keywords"></div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-label">Cleaned Corpus Tokens</div>
+          <div class="drawer-text" id="drawer-cleaned-tokens" style="font-family:var(--font-mono); font-size:0.8rem; background:var(--bg-subtle); padding:0.75rem; border-radius:6px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Nexora AI • Language Systems Group • Technical Assessment Ref: NX-NLP-2026-017 • Powered by FastAPI & Gensim</p>
+  </footer>
+
+  <!-- Main JavaScript Application Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+/venv/
+
+# Datasets (Excluded as requested)
+/data/
+*.csv
+
+# Model Weights & Embeddings in root models directory (Excluded as requested)
+/models/
+*.model*
+*.npy
+*.pkl
+
+# Technical Assessment Briefs (Excluded as requested)
+/docs/
+*.pdf
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IDEs & System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
